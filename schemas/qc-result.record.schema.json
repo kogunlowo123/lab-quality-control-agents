@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "ResultSource": {
+      "enum": [
+        "hl7",
+        "astm",
+        "api"
+      ],
+      "title": "ResultSource",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/qc-result.record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "One control measurement, scored against the target that was effective.",
+  "properties": {
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "control_lot": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Control Lot",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "level": {
+      "title": "Level",
+      "type": "integer"
+    },
+    "material_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Material Id",
+      "type": "string"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "reagent_lot": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reagent Lot"
+    },
+    "received_at": {
+      "format": "date-time",
+      "title": "Received At",
+      "type": "string"
+    },
+    "result_id": {
+      "title": "Result Id",
+      "type": "string"
+    },
+    "run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/ResultSource"
+    },
+    "source_key": {
+      "description": "Idempotency key derived from the source message",
+      "title": "Source Key",
+      "type": "string"
+    },
+    "units": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Units",
+      "type": "string"
+    },
+    "value": {
+      "title": "Value",
+      "type": "number"
+    },
+    "z": {
+      "title": "Z",
+      "type": "number"
+    }
+  },
+  "required": [
+    "result_id",
+    "source_key",
+    "source",
+    "analyte",
+    "instrument_id",
+    "material_id",
+    "control_lot",
+    "level",
+    "run_id",
+    "value",
+    "units",
+    "z",
+    "observed_at",
+    "received_at"
+  ],
+  "title": "QcResult",
+  "type": "object"
+}

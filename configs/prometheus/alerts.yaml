@@ -1,0 +1,90 @@
+# PrometheusRule-compatible alert rules. Load with the Prometheus Operator
+# (wrap in a PrometheusRule) or a rule_files entry.
+# SLOs (docs/architecture/agent-specification.md):
+#   availability  99.9% of ingestion and API requests succeed (non-5xx)
+#   latency       p95 QC run ingestion (evaluation included) < 500 ms
+#   freshness     a rejected run has an investigation within 5 minutes
+groups:
+  - name: lab-quality-control-agents.slo
+    rules:
+      - record: labqc:request_errors:ratio_5m
+        expr: |
+          sum(rate(labqc_http_request_duration_seconds_count{status=~"5.."}[5m]))
+          /
+          clamp_min(sum(rate(labqc_http_request_duration_seconds_count[5m])), 1e-9)
+
+      - alert: LabQcErrorBudgetBurnFast
+        expr: labqc:request_errors:ratio_5m > (14.4 * 0.001)
+        for: 5m
+        labels: {severity: page}
+        annotations:
+          summary: Lab QC service burning its error budget 14x faster than sustainable
+          runbook: docs/runbooks/incident-response.md#elevated-5xx
+
+      - alert: LabQcIngestionLatencyHigh
+        expr: |
+          histogram_quantile(0.95, sum by (le) (
+            rate(labqc_http_request_duration_seconds_bucket{route=~"/v1/qc/(hl7|astm|runs)",method="POST"}[10m])
+          )) > 0.5
+        for: 15m
+        labels: {severity: ticket}
+        annotations:
+          summary: p95 QC ingestion above 500 ms
+          runbook: docs/runbooks/monitoring.md#latency
+
+  - name: lab-quality-control-agents.quality
+    rules:
+      - alert: LabQcRejectedRunsWithoutInvestigation
+        expr: |
+          sum(increase(labqc_run_outcomes_total{outcome="reject"}[15m]))
+          > sum(increase(labqc_investigations_total[15m]))
+        for: 5m
+        labels: {severity: page}
+        annotations:
+          summary: Rejected QC runs are not being investigated (agent identity or workflow failure)
+          runbook: docs/runbooks/qc-failure.md#investigation-missing
+
+      - alert: LabQcHoldsOpenTooLong
+        expr: labqc_active_holds > 0
+        for: 8h
+        labels: {severity: ticket}
+        annotations:
+          summary: Patient-result release has been on hold for over 8 hours
+          runbook: docs/runbooks/qc-failure.md#long-holds
+
+      - alert: LabQcRejectionRateHigh
+        expr: |
+          sum(rate(labqc_run_outcomes_total{outcome="reject"}[1h]))
+          /
+          clamp_min(sum(rate(labqc_run_outcomes_total[1h])), 1e-9) > 0.05
+        for: 1h
+        labels: {severity: ticket}
+        annotations:
+          summary: More than 5% of QC runs rejected in the last hour
+          runbook: docs/runbooks/qc-failure.md#rejection-rate
+
+      - alert: LabQcMessagesRefused
+        expr: sum(increase(labqc_messages_failed_total[30m])) > 5
+        for: 10m
+        labels: {severity: ticket}
+        annotations:
+          summary: Instrument or LIS messages are being refused (format or patient-data guard)
+          runbook: docs/runbooks/qc-failure.md#messages-refused
+
+      - alert: LabQcUnmatchedResults
+        expr: sum by (reason) (increase(labqc_results_unmatched_total[1h])) > 10
+        for: 15m
+        labels: {severity: ticket}
+        annotations:
+          summary: QC results arriving without a matching target (new lot or catalogue gap)
+          runbook: docs/runbooks/qc-failure.md#unmatched-results
+
+  - name: lab-quality-control-agents.availability
+    rules:
+      - alert: LabQcNotReady
+        expr: sum(up{job="lab-quality-control-agents"}) < 1
+        for: 5m
+        labels: {severity: page}
+        annotations:
+          summary: No lab QC replica is being scraped
+          runbook: docs/runbooks/incident-response.md#replicas-down

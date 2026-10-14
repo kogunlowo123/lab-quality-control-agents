@@ -1,0 +1,89 @@
+# Authorization policy for laboratory quality control.
+# Combining: deny overrides, then require_approval, then allow; default deny.
+#
+# Subject attributes:
+#   kind             human | agent | service (from the credential, see security/authn.py)
+#   roles            enterprise app roles: qc-technologist, qc-supervisor, qc-auditor,
+#                    qc-interface (instrument middleware / LIS engine), qc-agent
+#   action_in_scope  true when an OAuth scope on the credential matches the action
+#   via_fabric       true for agent-identity-fabric credentials
+#   delegated        true when the credential carries a delegation chain
+# Resource classification: 0=PUBLIC 1=INTERNAL 2=CONFIDENTIAL 3=RESTRICTED.
+name: lab-quality-control
+version: "2026.10.0"
+rules:
+  - id: deny-restricted-data
+    description: >-
+      QC records hold control-material measurements, never patient data.
+      Anything classified RESTRICTED (PHI) is refused outright.
+    effect: deny
+    actions: ["*"]
+    conditions:
+      - {attribute: resource.classification, operator: gte, value: 3}
+
+  - id: deny-delegated-signatures
+    description: Signatures cannot be exercised through a delegation chain.
+    effect: deny
+    actions: ["capa:approve", "capa:reject", "capa:close", "capa:complete-action", "qc-target:write"]
+    conditions:
+      - {attribute: subject.delegated, operator: eq, value: true}
+
+  - id: signatures-need-a-human
+    description: >-
+      Approving, rejecting and closing CAPA records and changing QC targets
+      are electronic signatures of a qualified person. Agents and services
+      receive require_approval and the action is not performed.
+    effect: require_approval
+    actions: ["capa:approve", "capa:reject", "capa:close", "capa:complete-action", "qc-target:write"]
+    conditions:
+      - {attribute: subject.kind, operator: ne, value: human}
+
+  - id: supervisor-signs
+    description: QC supervisors sign CAPA approvals, rejections, closures and target changes.
+    effect: allow
+    actions: ["capa:approve", "capa:reject", "capa:close", "qc-target:write"]
+    conditions:
+      - {attribute: subject.kind, operator: eq, value: human}
+      - {attribute: subject.roles, operator: contains, value: qc-supervisor}
+
+  - id: staff-operations
+    description: Technologists and supervisors run day-to-day QC operations.
+    effect: allow
+    actions:
+      - "qc:ingest"
+      - "qc:read"
+      - "instrument-event:write"
+      - "investigation:run"
+      - "capa:propose"
+      - "capa:read"
+      - "capa:complete-action"
+      - "capa:verify"
+    conditions:
+      - {attribute: subject.kind, operator: eq, value: human}
+      - {attribute: subject.roles, operator: contains_any, value: [qc-technologist, qc-supervisor]}
+
+  - id: auditor-read
+    description: Auditors and inspectors read QC records and CAPA history.
+    effect: allow
+    actions: ["qc:read", "capa:read"]
+    conditions:
+      - {attribute: subject.kind, operator: eq, value: human}
+      - {attribute: subject.roles, operator: contains, value: qc-auditor}
+
+  - id: interface-ingest
+    description: Instrument middleware and the LIS interface engine deliver QC results and events.
+    effect: allow
+    actions: ["qc:ingest", "instrument-event:write"]
+    conditions:
+      - {attribute: subject.kind, operator: eq, value: service}
+      - {attribute: subject.roles, operator: contains, value: qc-interface}
+
+  - id: agent-scoped-actions
+    description: >-
+      Agents act only within scopes on their credential and never beyond
+      investigation, proposal and verification.
+    effect: allow
+    actions: ["qc:ingest", "qc:read", "investigation:run", "capa:propose", "capa:read", "capa:verify"]
+    conditions:
+      - {attribute: subject.kind, operator: eq, value: agent}
+      - {attribute: subject.action_in_scope, operator: eq, value: true}

@@ -1,0 +1,276 @@
+{
+  "$defs": {
+    "CapaStatus": {
+      "enum": [
+        "proposed",
+        "approved",
+        "rejected",
+        "action_completed",
+        "verified",
+        "closed"
+      ],
+      "title": "CapaStatus",
+      "type": "string"
+    },
+    "CauseCategory": {
+      "enum": [
+        "reagent_lot",
+        "calibration",
+        "control_material",
+        "instrument",
+        "random_analytical",
+        "drift"
+      ],
+      "title": "CauseCategory",
+      "type": "string"
+    },
+    "ElectronicSignature": {
+      "properties": {
+        "meaning": {
+          "$ref": "#/$defs/SignatureMeaning"
+        },
+        "record_digest": {
+          "description": "sha256 of the CAPA content that was signed",
+          "title": "Record Digest",
+          "type": "string"
+        },
+        "signed_at": {
+          "format": "date-time",
+          "title": "Signed At",
+          "type": "string"
+        },
+        "signer": {
+          "description": "Authenticated subject",
+          "title": "Signer",
+          "type": "string"
+        },
+        "signer_name": {
+          "description": "Printed name from the identity provider",
+          "title": "Signer Name",
+          "type": "string"
+        },
+        "statement": {
+          "maxLength": 2000,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signer",
+        "signer_name",
+        "meaning",
+        "signed_at",
+        "record_digest",
+        "statement"
+      ],
+      "title": "ElectronicSignature",
+      "type": "object"
+    },
+    "ErrorType": {
+      "enum": [
+        "random",
+        "systematic"
+      ],
+      "title": "ErrorType",
+      "type": "string"
+    },
+    "SignatureMeaning": {
+      "description": "21 CFR 11.50(a)(3): the meaning associated with a signature.",
+      "enum": [
+        "approval",
+        "rejection",
+        "performed",
+        "closure"
+      ],
+      "title": "SignatureMeaning",
+      "type": "string"
+    },
+    "VerificationResult": {
+      "properties": {
+        "evaluated_at": {
+          "format": "date-time",
+          "title": "Evaluated At",
+          "type": "string"
+        },
+        "mean_z_by_level": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Mean Z By Level",
+          "type": "object"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "run_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Run Ids",
+          "type": "array"
+        },
+        "sufficient_data": {
+          "description": "False when too few complete runs exist yet",
+          "title": "Sufficient Data",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "passed",
+        "sufficient_data",
+        "run_ids",
+        "reasons",
+        "evaluated_at",
+        "mean_z_by_level"
+      ],
+      "title": "VerificationResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/capa.record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Corrective and preventive action record.",
+  "properties": {
+    "action_completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Action Completed At"
+    },
+    "action_note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Action Note"
+    },
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "capa_id": {
+      "title": "Capa Id",
+      "type": "string"
+    },
+    "corrective_actions": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Corrective Actions",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "error_types": {
+      "items": {
+        "$ref": "#/$defs/ErrorType"
+      },
+      "title": "Error Types",
+      "type": "array"
+    },
+    "evaluation_id": {
+      "title": "Evaluation Id",
+      "type": "string"
+    },
+    "hypothesis_id": {
+      "title": "Hypothesis Id",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "investigation_id": {
+      "title": "Investigation Id",
+      "type": "string"
+    },
+    "preventive_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preventive Actions",
+      "type": "array"
+    },
+    "proposed_by": {
+      "title": "Proposed By",
+      "type": "string"
+    },
+    "root_cause": {
+      "$ref": "#/$defs/CauseCategory"
+    },
+    "signatures": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ElectronicSignature"
+      },
+      "title": "Signatures",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/CapaStatus"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "verifications": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/VerificationResult"
+      },
+      "title": "Verifications",
+      "type": "array"
+    },
+    "version": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "capa_id",
+    "investigation_id",
+    "evaluation_id",
+    "analyte",
+    "instrument_id",
+    "status",
+    "root_cause",
+    "hypothesis_id",
+    "error_types",
+    "corrective_actions",
+    "preventive_actions",
+    "proposed_by",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "Capa",
+  "type": "object"
+}

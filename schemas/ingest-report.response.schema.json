@@ -1,0 +1,339 @@
+{
+  "$defs": {
+    "ErrorType": {
+      "enum": [
+        "random",
+        "systematic"
+      ],
+      "title": "ErrorType",
+      "type": "string"
+    },
+    "ResultSource": {
+      "enum": [
+        "hl7",
+        "astm",
+        "api"
+      ],
+      "title": "ResultSource",
+      "type": "string"
+    },
+    "RuleScope": {
+      "enum": [
+        "single",
+        "within_run",
+        "across_runs",
+        "across_levels_and_runs"
+      ],
+      "title": "RuleScope",
+      "type": "string"
+    },
+    "RuleViolation": {
+      "properties": {
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "high",
+            "low",
+            "both"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "error_type": {
+          "$ref": "#/$defs/ErrorType"
+        },
+        "levels": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Levels",
+          "type": "array"
+        },
+        "result_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Result Ids",
+          "type": "array"
+        },
+        "rule": {
+          "$ref": "#/$defs/WestgardRule"
+        },
+        "scope": {
+          "$ref": "#/$defs/RuleScope"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        }
+      },
+      "required": [
+        "rule",
+        "severity",
+        "error_type",
+        "scope",
+        "direction",
+        "levels",
+        "result_ids",
+        "detail"
+      ],
+      "title": "RuleViolation",
+      "type": "object"
+    },
+    "RunEvaluation": {
+      "description": "Outcome of applying the multirule procedure to one analytical run.",
+      "properties": {
+        "analyte": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "title": "Analyte",
+          "type": "string"
+        },
+        "evaluated_at": {
+          "format": "date-time",
+          "title": "Evaluated At",
+          "type": "string"
+        },
+        "evaluation_id": {
+          "title": "Evaluation Id",
+          "type": "string"
+        },
+        "history_points": {
+          "description": "Prior observations considered",
+          "minimum": 0,
+          "title": "History Points",
+          "type": "integer"
+        },
+        "instrument_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "title": "Instrument Id",
+          "type": "string"
+        },
+        "levels": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Levels",
+          "type": "array"
+        },
+        "outcome": {
+          "$ref": "#/$defs/RunOutcome"
+        },
+        "result_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Result Ids",
+          "type": "array"
+        },
+        "rules_applied": {
+          "items": {
+            "$ref": "#/$defs/WestgardRule"
+          },
+          "title": "Rules Applied",
+          "type": "array"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "run_observed_at": {
+          "format": "date-time",
+          "title": "Run Observed At",
+          "type": "string"
+        },
+        "violations": {
+          "items": {
+            "$ref": "#/$defs/RuleViolation"
+          },
+          "title": "Violations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evaluation_id",
+        "analyte",
+        "instrument_id",
+        "run_id",
+        "outcome",
+        "violations",
+        "rules_applied",
+        "result_ids",
+        "levels",
+        "run_observed_at",
+        "evaluated_at",
+        "history_points"
+      ],
+      "title": "RunEvaluation",
+      "type": "object"
+    },
+    "RunOutcome": {
+      "enum": [
+        "accept",
+        "warning",
+        "reject"
+      ],
+      "title": "RunOutcome",
+      "type": "string"
+    },
+    "Severity": {
+      "enum": [
+        "warning",
+        "reject"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "UnmatchedObservation": {
+      "properties": {
+        "analyte_code": {
+          "title": "Analyte Code",
+          "type": "string"
+        },
+        "instrument_id": {
+          "title": "Instrument Id",
+          "type": "string"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference",
+        "analyte_code",
+        "instrument_id",
+        "material_id",
+        "reason"
+      ],
+      "title": "UnmatchedObservation",
+      "type": "object"
+    },
+    "WestgardRule": {
+      "description": "Control rules in Westgard notation (N_L: N observations beyond L).",
+      "enum": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "title": "WestgardRule",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/ingest-report.response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "ack": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "HL7 acknowledgement for HL7 submissions",
+      "title": "Ack"
+    },
+    "capas_proposed": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capas Proposed",
+      "type": "array"
+    },
+    "capas_verified": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capas Verified",
+      "type": "array"
+    },
+    "duplicates": {
+      "title": "Duplicates",
+      "type": "integer"
+    },
+    "evaluations": {
+      "items": {
+        "$ref": "#/$defs/RunEvaluation"
+      },
+      "title": "Evaluations",
+      "type": "array"
+    },
+    "holds_placed": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Holds Placed",
+      "type": "array"
+    },
+    "investigations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Investigations",
+      "type": "array"
+    },
+    "message_id": {
+      "title": "Message Id",
+      "type": "string"
+    },
+    "skipped": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Skipped",
+      "type": "array"
+    },
+    "source": {
+      "$ref": "#/$defs/ResultSource"
+    },
+    "stored": {
+      "title": "Stored",
+      "type": "integer"
+    },
+    "unmatched": {
+      "items": {
+        "$ref": "#/$defs/UnmatchedObservation"
+      },
+      "title": "Unmatched",
+      "type": "array"
+    },
+    "workflow_errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Workflow Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source",
+    "message_id",
+    "stored",
+    "duplicates",
+    "unmatched",
+    "skipped",
+    "evaluations",
+    "holds_placed",
+    "investigations",
+    "capas_proposed",
+    "capas_verified",
+    "workflow_errors"
+  ],
+  "title": "IngestReport",
+  "type": "object"
+}

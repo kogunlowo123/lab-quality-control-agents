@@ -1,0 +1,19 @@
+{
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/hl7-submission.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "message": {
+      "description": "HL7 v2 ORU^R01",
+      "maxLength": 1000000,
+      "minLength": 8,
+      "title": "Message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "message"
+  ],
+  "title": "Hl7Submission",
+  "type": "object"
+}

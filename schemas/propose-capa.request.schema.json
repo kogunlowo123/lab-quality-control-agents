@@ -1,0 +1,49 @@
+{
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/propose-capa.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "corrective_actions": {
+      "anyOf": [
+        {
+          "items": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corrective Actions"
+    },
+    "hypothesis_id": {
+      "anyOf": [
+        {
+          "pattern": "^H\\d{1,2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Hypothesis Id"
+    },
+    "investigation_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Investigation Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "investigation_id"
+  ],
+  "title": "ProposeCapa",
+  "type": "object"
+}

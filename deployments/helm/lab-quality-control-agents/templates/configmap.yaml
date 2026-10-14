@@ -1,0 +1,33 @@
+{{- $q := .Values.labqc -}}
+{{- if not $q.mcpAllowedHosts }}{{ fail "labqc.mcpAllowedHosts is required" }}{{ end -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "labqc.fullname" . }}
+  labels: {{- include "labqc.labels" . | nindent 4 }}
+data:
+  LABQC_ENVIRONMENT: {{ $q.environment | quote }}
+  LABQC_PUBLIC_URL: {{ required "labqc.publicUrl is required" $q.publicUrl | quote }}
+  LABQC_AGENT_ID: {{ required "labqc.agentId is required" $q.agentId | quote }}
+  LABQC_SITE_TIMEZONE: {{ $q.siteTimezone | quote }}
+  LABQC_LOG_LEVEL: {{ $q.logLevel | quote }}
+  LABQC_INVESTIGATION_LOOKBACK_HOURS: {{ $q.investigationLookbackHours | quote }}
+  LABQC_VERIFICATION_MIN_RUNS: {{ $q.verificationMinRuns | quote }}
+  LABQC_VERIFICATION_MIN_RUNS_SYSTEMATIC: {{ $q.verificationMinRunsSystematic | quote }}
+  LABQC_MCP_ALLOWED_HOSTS: {{ $q.mcpAllowedHosts | toJson | quote }}
+  LABQC_OIDC_ISSUER: {{ required "labqc.oidc.issuer is required" $q.oidc.issuer | quote }}
+  LABQC_OIDC_AUDIENCE: {{ required "labqc.oidc.audience is required" $q.oidc.audience | quote }}
+  LABQC_OIDC_JWKS_URL: {{ required "labqc.oidc.jwksUrl is required" $q.oidc.jwksUrl | quote }}
+  LABQC_ROLES_CLAIM: {{ $q.oidc.rolesClaim | quote }}
+  LABQC_NAME_CLAIM: {{ $q.oidc.nameClaim | quote }}
+  LABQC_AUDIT_KEY_FILE: {{ printf "/etc/lab-qc/audit-key/%s" (required "secrets.auditKeyFile is required" .Values.secrets.auditKeyFile) | quote }}
+  {{- with $q.identityFabric.url }}
+  LABQC_IDENTITY_FABRIC_URL: {{ . | quote }}
+  LABQC_WORKLOAD_TOKEN_FILE: /var/run/secrets/identity-fabric/token
+  {{- end }}
+  {{- if $q.modelProviders.enabled }}
+  LABQC_PROVIDERS_FILE: /app/configs/providers.yaml
+  {{- end }}
+  {{- with $q.otlpEndpoint }}
+  LABQC_OTLP_ENDPOINT: {{ . | quote }}
+  {{- end }}

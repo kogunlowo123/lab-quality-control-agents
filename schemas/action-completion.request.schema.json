@@ -1,0 +1,19 @@
+{
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/action-completion.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "note": {
+      "description": "What was done, by whom, when",
+      "maxLength": 2000,
+      "minLength": 10,
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "note"
+  ],
+  "title": "ActionCompletion",
+  "type": "object"
+}

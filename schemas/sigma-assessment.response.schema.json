@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "QcDesign": {
+      "properties": {
+        "controls_per_run": {
+          "description": "N: control measurements per run",
+          "title": "Controls Per Run",
+          "type": "integer"
+        },
+        "method_improvement_required": {
+          "title": "Method Improvement Required",
+          "type": "boolean"
+        },
+        "quality": {
+          "$ref": "#/$defs/SigmaQuality"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/WestgardRule"
+          },
+          "title": "Rules",
+          "type": "array"
+        },
+        "runs": {
+          "description": "R: runs across which the rules are applied",
+          "title": "Runs",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "quality",
+        "rules",
+        "controls_per_run",
+        "runs",
+        "method_improvement_required"
+      ],
+      "title": "QcDesign",
+      "type": "object"
+    },
+    "SigmaQuality": {
+      "enum": [
+        "world_class",
+        "excellent",
+        "good",
+        "marginal",
+        "poor",
+        "unacceptable"
+      ],
+      "title": "SigmaQuality",
+      "type": "string"
+    },
+    "WestgardRule": {
+      "description": "Control rules in Westgard notation (N_L: N observations beyond L).",
+      "enum": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "title": "WestgardRule",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/sigma-assessment.response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "analyte": {
+      "title": "Analyte",
+      "type": "string"
+    },
+    "bias_percent": {
+      "title": "Bias Percent",
+      "type": "number"
+    },
+    "cv_percent": {
+      "title": "Cv Percent",
+      "type": "number"
+    },
+    "design": {
+      "$ref": "#/$defs/QcDesign"
+    },
+    "instrument_id": {
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "level": {
+      "title": "Level",
+      "type": "integer"
+    },
+    "material_id": {
+      "title": "Material Id",
+      "type": "string"
+    },
+    "n": {
+      "title": "N",
+      "type": "integer"
+    },
+    "observed_mean": {
+      "title": "Observed Mean",
+      "type": "number"
+    },
+    "sigma": {
+      "title": "Sigma",
+      "type": "number"
+    },
+    "target_mean": {
+      "title": "Target Mean",
+      "type": "number"
+    },
+    "tea_percent": {
+      "title": "Tea Percent",
+      "type": "number"
+    },
+    "tea_source": {
+      "title": "Tea Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "analyte",
+    "instrument_id",
+    "material_id",
+    "level",
+    "n",
+    "target_mean",
+    "observed_mean",
+    "cv_percent",
+    "bias_percent",
+    "tea_percent",
+    "tea_source",
+    "sigma",
+    "design"
+  ],
+  "title": "SigmaAssessment",
+  "type": "object"
+}

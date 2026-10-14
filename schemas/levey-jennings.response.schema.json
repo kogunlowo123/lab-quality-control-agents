@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "ControlLimits": {
+      "properties": {
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "minus_1sd": {
+          "title": "Minus 1Sd",
+          "type": "number"
+        },
+        "minus_2sd": {
+          "title": "Minus 2Sd",
+          "type": "number"
+        },
+        "minus_3sd": {
+          "title": "Minus 3Sd",
+          "type": "number"
+        },
+        "plus_1sd": {
+          "title": "Plus 1Sd",
+          "type": "number"
+        },
+        "plus_2sd": {
+          "title": "Plus 2Sd",
+          "type": "number"
+        },
+        "plus_3sd": {
+          "title": "Plus 3Sd",
+          "type": "number"
+        },
+        "sd": {
+          "title": "Sd",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "sd",
+        "plus_1sd",
+        "minus_1sd",
+        "plus_2sd",
+        "minus_2sd",
+        "plus_3sd",
+        "minus_3sd"
+      ],
+      "title": "ControlLimits",
+      "type": "object"
+    },
+    "DescriptiveStats": {
+      "properties": {
+        "cv_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "None when the mean is zero",
+          "title": "Cv Percent"
+        },
+        "maximum": {
+          "title": "Maximum",
+          "type": "number"
+        },
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "minimum": {
+          "title": "Minimum",
+          "type": "number"
+        },
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "sd": {
+          "title": "Sd",
+          "type": "number"
+        }
+      },
+      "required": [
+        "n",
+        "mean",
+        "sd",
+        "cv_percent",
+        "minimum",
+        "maximum"
+      ],
+      "title": "DescriptiveStats",
+      "type": "object"
+    },
+    "LeveyJenningsPoint": {
+      "properties": {
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "result_id": {
+          "title": "Result Id",
+          "type": "string"
+        },
+        "rules_violated": {
+          "items": {
+            "$ref": "#/$defs/WestgardRule"
+          },
+          "title": "Rules Violated",
+          "type": "array"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "z": {
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "result_id",
+        "run_id",
+        "observed_at",
+        "value",
+        "z",
+        "rules_violated"
+      ],
+      "title": "LeveyJenningsPoint",
+      "type": "object"
+    },
+    "WestgardRule": {
+      "description": "Control rules in Westgard notation (N_L: N observations beyond L).",
+      "enum": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "title": "WestgardRule",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/levey-jennings.response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "analyte": {
+      "title": "Analyte",
+      "type": "string"
+    },
+    "bias_percent": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Observed mean vs target mean",
+      "title": "Bias Percent"
+    },
+    "control_lot": {
+      "title": "Control Lot",
+      "type": "string"
+    },
+    "instrument_id": {
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "level": {
+      "title": "Level",
+      "type": "integer"
+    },
+    "limits": {
+      "$ref": "#/$defs/ControlLimits"
+    },
+    "material_id": {
+      "title": "Material Id",
+      "type": "string"
+    },
+    "observed": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DescriptiveStats"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "points": {
+      "items": {
+        "$ref": "#/$defs/LeveyJenningsPoint"
+      },
+      "title": "Points",
+      "type": "array"
+    },
+    "units": {
+      "title": "Units",
+      "type": "string"
+    }
+  },
+  "required": [
+    "analyte",
+    "instrument_id",
+    "material_id",
+    "control_lot",
+    "level",
+    "units",
+    "limits",
+    "points",
+    "observed",
+    "bias_percent"
+  ],
+  "title": "LeveyJenningsChart",
+  "type": "object"
+}

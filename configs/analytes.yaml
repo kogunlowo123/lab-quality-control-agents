@@ -1,0 +1,103 @@
+# Analyte catalogue.
+#
+# code      canonical analyte code used throughout QC history
+# loinc     LOINC code carried in HL7 OBX-3 (coding system LN)
+# aliases   instrument-local test codes (ASTM R-3 component 4, HL7 local codes)
+# tea       total allowable error used for sigma metrics; where both a
+#           percentage and an absolute limit are given, the greater applies
+#           at the control concentration (the CLIA convention)
+# calibration_interval_days  manufacturer calibration interval; a run beyond it
+#           adds calibration evidence to investigations
+#
+# The TEa values are the CLIA proficiency testing acceptance limits in
+# 42 CFR 493 Subpart I as revised in 2024. Laboratories that use biological
+# variation or other quality goals replace them here; verify against the
+# current eCFR text before relying on them.
+analytes:
+  - code: GLU
+    name: Glucose
+    loinc: "2345-7"
+    units: mg/dL
+    aliases: [GLUC, GLU2]
+    tea: {percent: 8, absolute: 6, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 14
+
+  - code: NA
+    name: Sodium
+    loinc: "2951-2"
+    units: mmol/L
+    aliases: [SOD]
+    tea: {absolute: 4, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 7
+
+  - code: K
+    name: Potassium
+    loinc: "2823-3"
+    units: mmol/L
+    aliases: [POT]
+    tea: {absolute: 0.3, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 7
+
+  - code: CL
+    name: Chloride
+    loinc: "2075-0"
+    units: mmol/L
+    aliases: [CHL]
+    tea: {percent: 5, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 7
+
+  - code: CA
+    name: Calcium
+    loinc: "17861-6"
+    units: mg/dL
+    aliases: [CALC]
+    tea: {absolute: 1.0, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 14
+
+  - code: CREA
+    name: Creatinine
+    loinc: "2160-0"
+    units: mg/dL
+    aliases: [CREAT, CRE2]
+    tea: {percent: 10, absolute: 0.2, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 21
+
+  - code: BUN
+    name: Urea nitrogen
+    loinc: "3094-0"
+    units: mg/dL
+    aliases: [UREA]
+    tea: {percent: 9, absolute: 2, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 21
+
+  - code: CHOL
+    name: Cholesterol
+    loinc: "2093-3"
+    units: mg/dL
+    aliases: [CHOL2]
+    tea: {percent: 10, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 30
+
+  - code: ALT
+    name: Alanine aminotransferase
+    loinc: "1742-6"
+    units: U/L
+    aliases: [ALTL, GPT]
+    tea: {percent: 15, absolute: 6, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 30
+
+  - code: HGB
+    name: Hemoglobin
+    loinc: "718-7"
+    units: g/dL
+    aliases: [HB]
+    tea: {percent: 4, source: "CLIA 42 CFR 493.941 (2024)"}
+    calibration_interval_days: 180
+
+  - code: HBA1C
+    name: Hemoglobin A1c
+    loinc: "4548-4"
+    units: "%"
+    aliases: [A1C]
+    tea: {percent: 8, source: "CLIA 42 CFR 493.931 (2024)"}
+    calibration_interval_days: 30

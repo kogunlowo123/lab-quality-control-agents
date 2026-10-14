@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "WestgardRule": {
+      "description": "Control rules in Westgard notation (N_L: N observations beyond L).",
+      "enum": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "title": "WestgardRule",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/establish-target.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Establish a laboratory target from baseline control data (CLSI C24).",
+  "properties": {
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "control_lot": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Control Lot",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "level": {
+      "maximum": 6,
+      "minimum": 1,
+      "title": "Level",
+      "type": "integer"
+    },
+    "material_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Material Id",
+      "type": "string"
+    },
+    "rules": {
+      "default": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "items": {
+        "$ref": "#/$defs/WestgardRule"
+      },
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    },
+    "units": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Units",
+      "type": "string"
+    },
+    "values": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 1000,
+      "minItems": 2,
+      "title": "Values",
+      "type": "array"
+    }
+  },
+  "required": [
+    "analyte",
+    "instrument_id",
+    "material_id",
+    "control_lot",
+    "level",
+    "units",
+    "values"
+  ],
+  "title": "EstablishTarget",
+  "type": "object"
+}

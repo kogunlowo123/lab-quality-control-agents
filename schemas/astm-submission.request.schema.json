@@ -1,0 +1,24 @@
+{
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/astm-submission.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "maxLength": 1000000,
+      "minLength": 4,
+      "title": "Data",
+      "type": "string"
+    },
+    "framed": {
+      "default": true,
+      "description": "True for E1381 frames (STX..ETX), false for bare records",
+      "title": "Framed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "AstmSubmission",
+  "type": "object"
+}

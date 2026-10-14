@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "InstrumentEventKind": {
+      "enum": [
+        "calibration",
+        "maintenance",
+        "reagent_lot_change",
+        "control_lot_change",
+        "control_vial_opened",
+        "hardware_fault",
+        "software_update"
+      ],
+      "title": "InstrumentEventKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/instrument-event.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "analyte": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Analyte"
+    },
+    "detail": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Detail",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/InstrumentEventKind"
+    },
+    "lot": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lot"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "instrument_id",
+    "kind",
+    "occurred_at"
+  ],
+  "title": "InstrumentEventInput",
+  "type": "object"
+}

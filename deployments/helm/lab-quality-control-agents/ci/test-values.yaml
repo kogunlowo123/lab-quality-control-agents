@@ -1,0 +1,25 @@
+# Values used by CI to render and schema-validate the chart (helm lint,
+# helm template | kubeconform). They describe a complete, valid deployment.
+labqc:
+  publicUrl: https://qc.lab.ci.internal
+  agentId: spiffe://agents.ci.internal/agent/lab-qc/qc-agents
+  siteTimezone: America/Chicago
+  mcpAllowedHosts: ["qc.lab.ci.internal", "qc.lab.ci.internal:*"]
+  oidc:
+    issuer: https://login.ci.internal/tenant/v2.0
+    audience: api://lab-quality-control
+    jwksUrl: https://login.ci.internal/tenant/discovery/v2.0/keys
+  identityFabric:
+    url: https://identity.agents.ci.internal
+  modelProviders:
+    enabled: true
+secrets:
+  auditKeyFile: audit-2026-10.pem
+podLabels:
+  azure.workload.identity/use: "true"
+ingress:
+  enabled: true
+  className: nginx
+  host: qc.lab.ci.internal
+serviceMonitor:
+  enabled: true

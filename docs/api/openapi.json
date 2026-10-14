@@ -1,0 +1,3681 @@
+{
+  "components": {
+    "schemas": {
+      "ActionCompletion": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "description": "What was done, by whom, when",
+            "maxLength": 2000,
+            "minLength": 10,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "note"
+        ],
+        "title": "ActionCompletion",
+        "type": "object"
+      },
+      "AstmSubmission": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "maxLength": 1000000,
+            "minLength": 4,
+            "title": "Data",
+            "type": "string"
+          },
+          "framed": {
+            "default": true,
+            "description": "True for E1381 frames (STX..ETX), false for bare records",
+            "title": "Framed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "AstmSubmission",
+        "type": "object"
+      },
+      "Capa": {
+        "description": "Corrective and preventive action record.",
+        "properties": {
+          "action_completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Completed At"
+          },
+          "action_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Note"
+          },
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "capa_id": {
+            "title": "Capa Id",
+            "type": "string"
+          },
+          "corrective_actions": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Corrective Actions",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error_types": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorType"
+            },
+            "title": "Error Types",
+            "type": "array"
+          },
+          "evaluation_id": {
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "hypothesis_id": {
+            "title": "Hypothesis Id",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "investigation_id": {
+            "title": "Investigation Id",
+            "type": "string"
+          },
+          "preventive_actions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Preventive Actions",
+            "type": "array"
+          },
+          "proposed_by": {
+            "title": "Proposed By",
+            "type": "string"
+          },
+          "root_cause": {
+            "$ref": "#/components/schemas/CauseCategory"
+          },
+          "signatures": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ElectronicSignature"
+            },
+            "title": "Signatures",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CapaStatus"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "verifications": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/VerificationResult"
+            },
+            "title": "Verifications",
+            "type": "array"
+          },
+          "version": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "capa_id",
+          "investigation_id",
+          "evaluation_id",
+          "analyte",
+          "instrument_id",
+          "status",
+          "root_cause",
+          "hypothesis_id",
+          "error_types",
+          "corrective_actions",
+          "preventive_actions",
+          "proposed_by",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Capa",
+        "type": "object"
+      },
+      "CapaList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Capa"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "title": "CapaList",
+        "type": "object"
+      },
+      "CapaStatus": {
+        "enum": [
+          "proposed",
+          "approved",
+          "rejected",
+          "action_completed",
+          "verified",
+          "closed"
+        ],
+        "title": "CapaStatus",
+        "type": "string"
+      },
+      "CauseCategory": {
+        "enum": [
+          "reagent_lot",
+          "calibration",
+          "control_material",
+          "instrument",
+          "random_analytical",
+          "drift"
+        ],
+        "title": "CauseCategory",
+        "type": "string"
+      },
+      "ControlLimits": {
+        "properties": {
+          "mean": {
+            "title": "Mean",
+            "type": "number"
+          },
+          "minus_1sd": {
+            "title": "Minus 1Sd",
+            "type": "number"
+          },
+          "minus_2sd": {
+            "title": "Minus 2Sd",
+            "type": "number"
+          },
+          "minus_3sd": {
+            "title": "Minus 3Sd",
+            "type": "number"
+          },
+          "plus_1sd": {
+            "title": "Plus 1Sd",
+            "type": "number"
+          },
+          "plus_2sd": {
+            "title": "Plus 2Sd",
+            "type": "number"
+          },
+          "plus_3sd": {
+            "title": "Plus 3Sd",
+            "type": "number"
+          },
+          "sd": {
+            "title": "Sd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "mean",
+          "sd",
+          "plus_1sd",
+          "minus_1sd",
+          "plus_2sd",
+          "minus_2sd",
+          "plus_3sd",
+          "minus_3sd"
+        ],
+        "title": "ControlLimits",
+        "type": "object"
+      },
+      "DescriptiveStats": {
+        "properties": {
+          "cv_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None when the mean is zero",
+            "title": "Cv Percent"
+          },
+          "maximum": {
+            "title": "Maximum",
+            "type": "number"
+          },
+          "mean": {
+            "title": "Mean",
+            "type": "number"
+          },
+          "minimum": {
+            "title": "Minimum",
+            "type": "number"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "sd": {
+            "title": "Sd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "n",
+          "mean",
+          "sd",
+          "cv_percent",
+          "minimum",
+          "maximum"
+        ],
+        "title": "DescriptiveStats",
+        "type": "object"
+      },
+      "ElectronicSignature": {
+        "properties": {
+          "meaning": {
+            "$ref": "#/components/schemas/SignatureMeaning"
+          },
+          "record_digest": {
+            "description": "sha256 of the CAPA content that was signed",
+            "title": "Record Digest",
+            "type": "string"
+          },
+          "signed_at": {
+            "format": "date-time",
+            "title": "Signed At",
+            "type": "string"
+          },
+          "signer": {
+            "description": "Authenticated subject",
+            "title": "Signer",
+            "type": "string"
+          },
+          "signer_name": {
+            "description": "Printed name from the identity provider",
+            "title": "Signer Name",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 2000,
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "signer",
+          "signer_name",
+          "meaning",
+          "signed_at",
+          "record_digest",
+          "statement"
+        ],
+        "title": "ElectronicSignature",
+        "type": "object"
+      },
+      "ErrorType": {
+        "enum": [
+          "random",
+          "systematic"
+        ],
+        "title": "ErrorType",
+        "type": "string"
+      },
+      "EstablishTarget": {
+        "additionalProperties": false,
+        "description": "Establish a laboratory target from baseline control data (CLSI C24).",
+        "properties": {
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "control_lot": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Control Lot",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "material_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "rules": {
+            "default": [
+              "1_2s",
+              "1_3s",
+              "2_2s",
+              "R_4s",
+              "4_1s",
+              "10_x"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WestgardRule"
+            },
+            "minItems": 1,
+            "title": "Rules",
+            "type": "array"
+          },
+          "units": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Units",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000,
+            "minItems": 2,
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "analyte",
+          "instrument_id",
+          "material_id",
+          "control_lot",
+          "level",
+          "units",
+          "values"
+        ],
+        "title": "EstablishTarget",
+        "type": "object"
+      },
+      "EvaluationList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunEvaluation"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "title": "EvaluationList",
+        "type": "object"
+      },
+      "Evidence": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "rule",
+              "event",
+              "lot_change",
+              "cross_analyte",
+              "timing",
+              "pattern"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "description",
+          "weight"
+        ],
+        "title": "Evidence",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "Hl7Submission": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "description": "HL7 v2 ORU^R01",
+            "maxLength": 1000000,
+            "minLength": 8,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "Hl7Submission",
+        "type": "object"
+      },
+      "HoldList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/QcHold"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "HoldList",
+        "type": "object"
+      },
+      "Hypothesis": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/CauseCategory"
+          },
+          "corrective_actions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Corrective Actions",
+            "type": "array"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "hypothesis_id": {
+            "title": "Hypothesis Id",
+            "type": "string"
+          },
+          "preventive_actions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Preventive Actions",
+            "type": "array"
+          },
+          "probability": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Probability",
+            "type": "number"
+          },
+          "score": {
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "hypothesis_id",
+          "category",
+          "probability",
+          "score",
+          "evidence",
+          "corrective_actions",
+          "preventive_actions"
+        ],
+        "title": "Hypothesis",
+        "type": "object"
+      },
+      "IngestReport": {
+        "properties": {
+          "ack": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "HL7 acknowledgement for HL7 submissions",
+            "title": "Ack"
+          },
+          "capas_proposed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capas Proposed",
+            "type": "array"
+          },
+          "capas_verified": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capas Verified",
+            "type": "array"
+          },
+          "duplicates": {
+            "title": "Duplicates",
+            "type": "integer"
+          },
+          "evaluations": {
+            "items": {
+              "$ref": "#/components/schemas/RunEvaluation"
+            },
+            "title": "Evaluations",
+            "type": "array"
+          },
+          "holds_placed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Holds Placed",
+            "type": "array"
+          },
+          "investigations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Investigations",
+            "type": "array"
+          },
+          "message_id": {
+            "title": "Message Id",
+            "type": "string"
+          },
+          "skipped": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skipped",
+            "type": "array"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ResultSource"
+          },
+          "stored": {
+            "title": "Stored",
+            "type": "integer"
+          },
+          "unmatched": {
+            "items": {
+              "$ref": "#/components/schemas/UnmatchedObservation"
+            },
+            "title": "Unmatched",
+            "type": "array"
+          },
+          "workflow_errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Workflow Errors",
+            "type": "array"
+          }
+        },
+        "required": [
+          "source",
+          "message_id",
+          "stored",
+          "duplicates",
+          "unmatched",
+          "skipped",
+          "evaluations",
+          "holds_placed",
+          "investigations",
+          "capas_proposed",
+          "capas_verified",
+          "workflow_errors"
+        ],
+        "title": "IngestReport",
+        "type": "object"
+      },
+      "InstrumentEvent": {
+        "additionalProperties": false,
+        "description": "A change on an instrument that can explain a QC failure.",
+        "properties": {
+          "analyte": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "None means instrument-wide",
+            "title": "Analyte"
+          },
+          "detail": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Detail",
+            "type": "string"
+          },
+          "event_id": {
+            "title": "Event Id",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/InstrumentEventKind"
+          },
+          "lot": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lot"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "recorded_by": {
+            "title": "Recorded By",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_id",
+          "instrument_id",
+          "kind",
+          "occurred_at",
+          "recorded_by",
+          "recorded_at"
+        ],
+        "title": "InstrumentEvent",
+        "type": "object"
+      },
+      "InstrumentEventInput": {
+        "additionalProperties": false,
+        "properties": {
+          "analyte": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analyte"
+          },
+          "detail": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Detail",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/InstrumentEventKind"
+          },
+          "lot": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lot"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instrument_id",
+          "kind",
+          "occurred_at"
+        ],
+        "title": "InstrumentEventInput",
+        "type": "object"
+      },
+      "InstrumentEventKind": {
+        "enum": [
+          "calibration",
+          "maintenance",
+          "reagent_lot_change",
+          "control_lot_change",
+          "control_vial_opened",
+          "hardware_fault",
+          "software_update"
+        ],
+        "title": "InstrumentEventKind",
+        "type": "string"
+      },
+      "InvestigateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "evaluation_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Evaluation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evaluation_id"
+        ],
+        "title": "InvestigateRequest",
+        "type": "object"
+      },
+      "Investigation": {
+        "description": "Root cause analysis for one rejected run.",
+        "properties": {
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "title": "Created By",
+            "type": "string"
+          },
+          "error_types": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorType"
+            },
+            "title": "Error Types",
+            "type": "array"
+          },
+          "evaluation_id": {
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "hypotheses": {
+            "items": {
+              "$ref": "#/components/schemas/Hypothesis"
+            },
+            "title": "Hypotheses",
+            "type": "array"
+          },
+          "impact_window_end": {
+            "format": "date-time",
+            "title": "Impact Window End",
+            "type": "string"
+          },
+          "impact_window_start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last accepted run before the failure; patient results since then need review",
+            "title": "Impact Window Start"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "investigation_id": {
+            "title": "Investigation Id",
+            "type": "string"
+          },
+          "narrative": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Narrative"
+          },
+          "narrative_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Narrative Provider"
+          },
+          "other_analytes_rejected": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Other Analytes Rejected",
+            "type": "array"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "investigation_id",
+          "evaluation_id",
+          "analyte",
+          "instrument_id",
+          "run_id",
+          "error_types",
+          "hypotheses",
+          "other_analytes_rejected",
+          "impact_window_start",
+          "impact_window_end",
+          "created_at",
+          "created_by"
+        ],
+        "title": "Investigation",
+        "type": "object"
+      },
+      "InvestigationList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Investigation"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "limit",
+          "offset"
+        ],
+        "title": "InvestigationList",
+        "type": "object"
+      },
+      "LeveyJenningsChart": {
+        "properties": {
+          "analyte": {
+            "title": "Analyte",
+            "type": "string"
+          },
+          "bias_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Observed mean vs target mean",
+            "title": "Bias Percent"
+          },
+          "control_lot": {
+            "title": "Control Lot",
+            "type": "string"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/ControlLimits"
+          },
+          "material_id": {
+            "title": "Material Id",
+            "type": "string"
+          },
+          "observed": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DescriptiveStats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/LeveyJenningsPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "units": {
+            "title": "Units",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analyte",
+          "instrument_id",
+          "material_id",
+          "control_lot",
+          "level",
+          "units",
+          "limits",
+          "points",
+          "observed",
+          "bias_percent"
+        ],
+        "title": "LeveyJenningsChart",
+        "type": "object"
+      },
+      "LeveyJenningsPoint": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "result_id": {
+            "title": "Result Id",
+            "type": "string"
+          },
+          "rules_violated": {
+            "items": {
+              "$ref": "#/components/schemas/WestgardRule"
+            },
+            "title": "Rules Violated",
+            "type": "array"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          },
+          "z": {
+            "title": "Z",
+            "type": "number"
+          }
+        },
+        "required": [
+          "result_id",
+          "run_id",
+          "observed_at",
+          "value",
+          "z",
+          "rules_violated"
+        ],
+        "title": "LeveyJenningsPoint",
+        "type": "object"
+      },
+      "ProposeCapa": {
+        "additionalProperties": false,
+        "properties": {
+          "corrective_actions": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 2000,
+                  "type": "string"
+                },
+                "maxItems": 20,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Corrective Actions"
+          },
+          "hypothesis_id": {
+            "anyOf": [
+              {
+                "pattern": "^H\\d{1,2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hypothesis Id"
+          },
+          "investigation_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Investigation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "investigation_id"
+        ],
+        "title": "ProposeCapa",
+        "type": "object"
+      },
+      "QcDesign": {
+        "properties": {
+          "controls_per_run": {
+            "description": "N: control measurements per run",
+            "title": "Controls Per Run",
+            "type": "integer"
+          },
+          "method_improvement_required": {
+            "title": "Method Improvement Required",
+            "type": "boolean"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/SigmaQuality"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/WestgardRule"
+            },
+            "title": "Rules",
+            "type": "array"
+          },
+          "runs": {
+            "description": "R: runs across which the rules are applied",
+            "title": "Runs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "quality",
+          "rules",
+          "controls_per_run",
+          "runs",
+          "method_improvement_required"
+        ],
+        "title": "QcDesign",
+        "type": "object"
+      },
+      "QcHold": {
+        "description": "Patient-result release hold for an analyte on an instrument.\n\nPlaced automatically when a run is rejected; lifted only when a\nsupervisor closes a verified CAPA.",
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "capa_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capa Id"
+          },
+          "evaluation_id": {
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "hold_id": {
+            "title": "Hold Id",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "placed_at": {
+            "format": "date-time",
+            "title": "Placed At",
+            "type": "string"
+          },
+          "released_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Released At"
+          },
+          "released_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Released By"
+          }
+        },
+        "required": [
+          "hold_id",
+          "analyte",
+          "instrument_id",
+          "evaluation_id",
+          "placed_at"
+        ],
+        "title": "QcHold",
+        "type": "object"
+      },
+      "QcTarget": {
+        "additionalProperties": false,
+        "description": "Assigned mean and SD for one control material lot on one analyte and instrument.",
+        "properties": {
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "control_lot": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Control Lot",
+            "type": "string"
+          },
+          "effective_from": {
+            "format": "date-time",
+            "title": "Effective From",
+            "type": "string"
+          },
+          "established_n": {
+            "anyOf": [
+              {
+                "minimum": 2.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Established N"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "material_id": {
+            "description": "Control material identifier, one per level",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "mean": {
+            "title": "Mean",
+            "type": "number"
+          },
+          "rules": {
+            "default": [
+              "1_2s",
+              "1_3s",
+              "2_2s",
+              "R_4s",
+              "4_1s",
+              "10_x"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WestgardRule"
+            },
+            "minItems": 1,
+            "title": "Rules",
+            "type": "array"
+          },
+          "sd": {
+            "exclusiveMinimum": 0.0,
+            "title": "Sd",
+            "type": "number"
+          },
+          "source": {
+            "$ref": "#/components/schemas/TargetSource",
+            "default": "laboratory"
+          },
+          "units": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Units",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analyte",
+          "instrument_id",
+          "material_id",
+          "control_lot",
+          "level",
+          "mean",
+          "sd",
+          "units",
+          "effective_from"
+        ],
+        "title": "QcTarget",
+        "type": "object"
+      },
+      "ResultSource": {
+        "enum": [
+          "hl7",
+          "astm",
+          "api"
+        ],
+        "title": "ResultSource",
+        "type": "string"
+      },
+      "RuleScope": {
+        "enum": [
+          "single",
+          "within_run",
+          "across_runs",
+          "across_levels_and_runs"
+        ],
+        "title": "RuleScope",
+        "type": "string"
+      },
+      "RuleViolation": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "direction": {
+            "enum": [
+              "high",
+              "low",
+              "both"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "error_type": {
+            "$ref": "#/components/schemas/ErrorType"
+          },
+          "levels": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Levels",
+            "type": "array"
+          },
+          "result_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Result Ids",
+            "type": "array"
+          },
+          "rule": {
+            "$ref": "#/components/schemas/WestgardRule"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/RuleScope"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          }
+        },
+        "required": [
+          "rule",
+          "severity",
+          "error_type",
+          "scope",
+          "direction",
+          "levels",
+          "result_ids",
+          "detail"
+        ],
+        "title": "RuleViolation",
+        "type": "object"
+      },
+      "RunEvaluation": {
+        "description": "Outcome of applying the multirule procedure to one analytical run.",
+        "properties": {
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "evaluated_at": {
+            "format": "date-time",
+            "title": "Evaluated At",
+            "type": "string"
+          },
+          "evaluation_id": {
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "history_points": {
+            "description": "Prior observations considered",
+            "minimum": 0.0,
+            "title": "History Points",
+            "type": "integer"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "levels": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Levels",
+            "type": "array"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/RunOutcome"
+          },
+          "result_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Result Ids",
+            "type": "array"
+          },
+          "rules_applied": {
+            "items": {
+              "$ref": "#/components/schemas/WestgardRule"
+            },
+            "title": "Rules Applied",
+            "type": "array"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "run_observed_at": {
+            "format": "date-time",
+            "title": "Run Observed At",
+            "type": "string"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/RuleViolation"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "evaluation_id",
+          "analyte",
+          "instrument_id",
+          "run_id",
+          "outcome",
+          "violations",
+          "rules_applied",
+          "result_ids",
+          "levels",
+          "run_observed_at",
+          "evaluated_at",
+          "history_points"
+        ],
+        "title": "RunEvaluation",
+        "type": "object"
+      },
+      "RunOutcome": {
+        "enum": [
+          "accept",
+          "warning",
+          "reject"
+        ],
+        "title": "RunOutcome",
+        "type": "string"
+      },
+      "RunResultInput": {
+        "additionalProperties": false,
+        "properties": {
+          "control_lot": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Control Lot"
+          },
+          "material_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "reagent_lot": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reagent Lot"
+          },
+          "units": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Units",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "material_id",
+          "value",
+          "units",
+          "observed_at"
+        ],
+        "title": "RunResultInput",
+        "type": "object"
+      },
+      "RunSubmission": {
+        "additionalProperties": false,
+        "description": "One analytical run of control measurements, one result per control material.",
+        "properties": {
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/RunResultInput"
+            },
+            "maxItems": 12,
+            "minItems": 1,
+            "title": "Results",
+            "type": "array"
+          },
+          "run_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:\\-]+$",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analyte",
+          "instrument_id",
+          "run_id",
+          "results"
+        ],
+        "title": "RunSubmission",
+        "type": "object"
+      },
+      "Severity": {
+        "enum": [
+          "warning",
+          "reject"
+        ],
+        "title": "Severity",
+        "type": "string"
+      },
+      "SigmaAssessment": {
+        "properties": {
+          "analyte": {
+            "title": "Analyte",
+            "type": "string"
+          },
+          "bias_percent": {
+            "title": "Bias Percent",
+            "type": "number"
+          },
+          "cv_percent": {
+            "title": "Cv Percent",
+            "type": "number"
+          },
+          "design": {
+            "$ref": "#/components/schemas/QcDesign"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "material_id": {
+            "title": "Material Id",
+            "type": "string"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "observed_mean": {
+            "title": "Observed Mean",
+            "type": "number"
+          },
+          "sigma": {
+            "title": "Sigma",
+            "type": "number"
+          },
+          "target_mean": {
+            "title": "Target Mean",
+            "type": "number"
+          },
+          "tea_percent": {
+            "title": "Tea Percent",
+            "type": "number"
+          },
+          "tea_source": {
+            "title": "Tea Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analyte",
+          "instrument_id",
+          "material_id",
+          "level",
+          "n",
+          "target_mean",
+          "observed_mean",
+          "cv_percent",
+          "bias_percent",
+          "tea_percent",
+          "tea_source",
+          "sigma",
+          "design"
+        ],
+        "title": "SigmaAssessment",
+        "type": "object"
+      },
+      "SigmaQuality": {
+        "enum": [
+          "world_class",
+          "excellent",
+          "good",
+          "marginal",
+          "poor",
+          "unacceptable"
+        ],
+        "title": "SigmaQuality",
+        "type": "string"
+      },
+      "SignatureInput": {
+        "additionalProperties": false,
+        "description": "Statement accompanying an electronic signature (21 CFR 11.50).",
+        "properties": {
+          "statement": {
+            "maxLength": 2000,
+            "minLength": 10,
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statement"
+        ],
+        "title": "SignatureInput",
+        "type": "object"
+      },
+      "SignatureMeaning": {
+        "description": "21 CFR 11.50(a)(3): the meaning associated with a signature.",
+        "enum": [
+          "approval",
+          "rejection",
+          "performed",
+          "closure"
+        ],
+        "title": "SignatureMeaning",
+        "type": "string"
+      },
+      "TargetInput": {
+        "additionalProperties": false,
+        "properties": {
+          "analyte": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Analyte",
+            "type": "string"
+          },
+          "control_lot": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Control Lot",
+            "type": "string"
+          },
+          "instrument_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "material_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "mean": {
+            "title": "Mean",
+            "type": "number"
+          },
+          "rules": {
+            "default": [
+              "1_2s",
+              "1_3s",
+              "2_2s",
+              "R_4s",
+              "4_1s",
+              "10_x"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WestgardRule"
+            },
+            "minItems": 1,
+            "title": "Rules",
+            "type": "array"
+          },
+          "sd": {
+            "exclusiveMinimum": 0.0,
+            "title": "Sd",
+            "type": "number"
+          },
+          "source": {
+            "$ref": "#/components/schemas/TargetSource",
+            "default": "manufacturer"
+          },
+          "units": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Units",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analyte",
+          "instrument_id",
+          "material_id",
+          "control_lot",
+          "level",
+          "mean",
+          "sd",
+          "units"
+        ],
+        "title": "TargetInput",
+        "type": "object"
+      },
+      "TargetList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/QcTarget"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "TargetList",
+        "type": "object"
+      },
+      "TargetSource": {
+        "enum": [
+          "manufacturer",
+          "laboratory"
+        ],
+        "title": "TargetSource",
+        "type": "string"
+      },
+      "UnmatchedObservation": {
+        "properties": {
+          "analyte_code": {
+            "title": "Analyte Code",
+            "type": "string"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "material_id": {
+            "title": "Material Id",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference",
+          "analyte_code",
+          "instrument_id",
+          "material_id",
+          "reason"
+        ],
+        "title": "UnmatchedObservation",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VerificationResult": {
+        "properties": {
+          "evaluated_at": {
+            "format": "date-time",
+            "title": "Evaluated At",
+            "type": "string"
+          },
+          "mean_z_by_level": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Mean Z By Level",
+            "type": "object"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "run_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Run Ids",
+            "type": "array"
+          },
+          "sufficient_data": {
+            "description": "False when too few complete runs exist yet",
+            "title": "Sufficient Data",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "passed",
+          "sufficient_data",
+          "run_ids",
+          "reasons",
+          "evaluated_at",
+          "mean_z_by_level"
+        ],
+        "title": "VerificationResult",
+        "type": "object"
+      },
+      "WestgardRule": {
+        "description": "Control rules in Westgard notation (N_L: N observations beyond L).",
+        "enum": [
+          "1_2s",
+          "1_3s",
+          "2_2s",
+          "R_4s",
+          "4_1s",
+          "10_x"
+        ],
+        "title": "WestgardRule",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "Westgard multirule QC, Levey-Jennings and sigma statistics, HL7 v2 and ASTM E1394 ingestion, root cause investigation, supervisor-approved CAPA and verification.",
+    "title": "Lab Quality Control Agents",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/.well-known/agent-card.json": {
+      "get": {
+        "operationId": "card__well_known_agent_card_json_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Card  Well Known Agent Card Json Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Card",
+        "tags": [
+          "a2a"
+        ]
+      }
+    },
+    "/a2a": {
+      "post": {
+        "operationId": "jsonrpc_a2a_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Jsonrpc",
+        "tags": [
+          "a2a"
+        ]
+      }
+    },
+    "/v1/capas": {
+      "get": {
+        "operationId": "list_capas_v1_capas_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/CapaStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapaList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Capas",
+        "tags": [
+          "capa"
+        ]
+      },
+      "post": {
+        "operationId": "propose_capa_v1_capas_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposeCapa"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Propose Capa",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capas/{capa_id}": {
+      "get": {
+        "operationId": "get_capa_v1_capas__capa_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capa_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Capa Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Capa",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capas/{capa_id}/approve": {
+      "post": {
+        "description": "Supervisor electronic signature: approve the proposed corrective action.",
+        "operationId": "approve_capa_v1_capas__capa_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capa_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Capa Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Capa",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capas/{capa_id}/close": {
+      "post": {
+        "description": "Supervisor signature closing a verified CAPA; lifts the result hold.",
+        "operationId": "close_capa_v1_capas__capa_id__close_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capa_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Capa Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Close Capa",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capas/{capa_id}/complete-action": {
+      "post": {
+        "description": "Staff signature that the approved corrective action has been performed.",
+        "operationId": "complete_action_v1_capas__capa_id__complete_action_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capa_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Capa Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionCompletion"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete Action",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capas/{capa_id}/reject": {
+      "post": {
+        "operationId": "reject_capa_v1_capas__capa_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capa_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Capa Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject Capa",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/capas/{capa_id}/verify": {
+      "post": {
+        "description": "Apply the verification run rules to QC runs performed after the action.",
+        "operationId": "verify_capa_v1_capas__capa_id__verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capa_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Capa Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capa"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Capa",
+        "tags": [
+          "capa"
+        ]
+      }
+    },
+    "/v1/holds": {
+      "get": {
+        "description": "Analyte/instrument pairs whose patient results must not be released.",
+        "operationId": "list_holds_v1_holds_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "active_only",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Active Only",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoldList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Holds",
+        "tags": [
+          "qc"
+        ]
+      }
+    },
+    "/v1/instrument-events": {
+      "post": {
+        "description": "Calibration, maintenance, lot changes and faults used by investigations.",
+        "operationId": "record_event_v1_instrument_events_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstrumentEventInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentEvent"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record Event",
+        "tags": [
+          "instruments"
+        ]
+      }
+    },
+    "/v1/investigations": {
+      "get": {
+        "operationId": "list_investigations_v1_investigations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestigationList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Investigations",
+        "tags": [
+          "investigations"
+        ]
+      },
+      "post": {
+        "operationId": "investigate_v1_investigations_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestigateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Investigation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Investigate",
+        "tags": [
+          "investigations"
+        ]
+      }
+    },
+    "/v1/investigations/{investigation_id}": {
+      "get": {
+        "operationId": "get_investigation_v1_investigations__investigation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "investigation_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Investigation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Investigation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Investigation",
+        "tags": [
+          "investigations"
+        ]
+      }
+    },
+    "/v1/qc/astm": {
+      "post": {
+        "description": "ASTM E1394 records, framed (E1381) or bare.",
+        "operationId": "ingest_astm_v1_qc_astm_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AstmSubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ingest Astm",
+        "tags": [
+          "ingestion"
+        ]
+      }
+    },
+    "/v1/qc/hl7": {
+      "post": {
+        "description": "HL7 v2 ORU^R01 QC results from the LIS or instrument middleware.",
+        "operationId": "ingest_hl7_v1_qc_hl7_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hl7Submission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ingest Hl7",
+        "tags": [
+          "ingestion"
+        ]
+      }
+    },
+    "/v1/qc/levey-jennings": {
+      "get": {
+        "operationId": "levey_jennings_v1_qc_levey_jennings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "analyte",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+              "title": "Analyte",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+              "title": "Instrument Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "material_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+              "title": "Material Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeveyJenningsChart"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Levey Jennings",
+        "tags": [
+          "statistics"
+        ]
+      }
+    },
+    "/v1/qc/runs": {
+      "get": {
+        "operationId": "list_runs_v1_qc_runs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "outcome",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RunOutcome"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Outcome"
+            }
+          },
+          {
+            "in": "query",
+            "name": "analyte",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Analyte"
+            }
+          },
+          {
+            "in": "query",
+            "name": "instrument_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Instrument Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Runs",
+        "tags": [
+          "qc"
+        ]
+      },
+      "post": {
+        "description": "A QC run as JSON (one result per control material).",
+        "operationId": "submit_run_v1_qc_runs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Run",
+        "tags": [
+          "ingestion"
+        ]
+      }
+    },
+    "/v1/qc/runs/{evaluation_id}": {
+      "get": {
+        "operationId": "get_run_v1_qc_runs__evaluation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "evaluation_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._\\-]+$",
+              "title": "Evaluation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunEvaluation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run",
+        "tags": [
+          "qc"
+        ]
+      }
+    },
+    "/v1/qc/sigma": {
+      "get": {
+        "operationId": "sigma_v1_qc_sigma_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "analyte",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+              "title": "Analyte",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+              "title": "Instrument Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "material_id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+              "title": "Material Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigmaAssessment"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sigma",
+        "tags": [
+          "statistics"
+        ]
+      }
+    },
+    "/v1/qc/targets": {
+      "get": {
+        "operationId": "list_targets_v1_qc_targets_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "analyte",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Analyte"
+            }
+          },
+          {
+            "in": "query",
+            "name": "instrument_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Instrument Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TargetList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Targets",
+        "tags": [
+          "targets"
+        ]
+      },
+      "put": {
+        "description": "Set a target (supervisor signature action).",
+        "operationId": "put_target_v1_qc_targets_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QcTarget"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Target",
+        "tags": [
+          "targets"
+        ]
+      }
+    },
+    "/v1/qc/targets/establish": {
+      "post": {
+        "description": "Establish a laboratory mean and SD from baseline data (CLSI C24).",
+        "operationId": "establish_target_v1_qc_targets_establish_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstablishTarget"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QcTarget"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Establish Target",
+        "tags": [
+          "targets"
+        ]
+      }
+    }
+  }
+}

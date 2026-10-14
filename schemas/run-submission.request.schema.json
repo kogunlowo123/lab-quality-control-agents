@@ -1,0 +1,103 @@
+{
+  "$defs": {
+    "RunResultInput": {
+      "additionalProperties": false,
+      "properties": {
+        "control_lot": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Control Lot"
+        },
+        "material_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "title": "Material Id",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "reagent_lot": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reagent Lot"
+        },
+        "units": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Units",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "material_id",
+        "value",
+        "units",
+        "observed_at"
+      ],
+      "title": "RunResultInput",
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/run-submission.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One analytical run of control measurements, one result per control material.",
+  "properties": {
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/RunResultInput"
+      },
+      "maxItems": 12,
+      "minItems": 1,
+      "title": "Results",
+      "type": "array"
+    },
+    "run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:\\-]+$",
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "analyte",
+    "instrument_id",
+    "run_id",
+    "results"
+  ],
+  "title": "RunSubmission",
+  "type": "object"
+}

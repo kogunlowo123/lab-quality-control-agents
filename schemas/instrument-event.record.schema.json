@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "InstrumentEventKind": {
+      "enum": [
+        "calibration",
+        "maintenance",
+        "reagent_lot_change",
+        "control_lot_change",
+        "control_vial_opened",
+        "hardware_fault",
+        "software_update"
+      ],
+      "title": "InstrumentEventKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/instrument-event.record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A change on an instrument that can explain a QC failure.",
+  "properties": {
+    "analyte": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "None means instrument-wide",
+      "title": "Analyte"
+    },
+    "detail": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Detail",
+      "type": "string"
+    },
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/InstrumentEventKind"
+    },
+    "lot": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lot"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "recorded_by": {
+      "title": "Recorded By",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "instrument_id",
+    "kind",
+    "occurred_at",
+    "recorded_by",
+    "recorded_at"
+  ],
+  "title": "InstrumentEvent",
+  "type": "object"
+}

@@ -1,0 +1,236 @@
+{
+  "$defs": {
+    "CauseCategory": {
+      "enum": [
+        "reagent_lot",
+        "calibration",
+        "control_material",
+        "instrument",
+        "random_analytical",
+        "drift"
+      ],
+      "title": "CauseCategory",
+      "type": "string"
+    },
+    "ErrorType": {
+      "enum": [
+        "random",
+        "systematic"
+      ],
+      "title": "ErrorType",
+      "type": "string"
+    },
+    "Evidence": {
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "rule",
+            "event",
+            "lot_change",
+            "cross_analyte",
+            "timing",
+            "pattern"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "weight": {
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "description",
+        "weight"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Hypothesis": {
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/CauseCategory"
+        },
+        "corrective_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Corrective Actions",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "hypothesis_id": {
+          "title": "Hypothesis Id",
+          "type": "string"
+        },
+        "preventive_actions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preventive Actions",
+          "type": "array"
+        },
+        "probability": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "score": {
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "hypothesis_id",
+        "category",
+        "probability",
+        "score",
+        "evidence",
+        "corrective_actions",
+        "preventive_actions"
+      ],
+      "title": "Hypothesis",
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/investigation.record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Root cause analysis for one rejected run.",
+  "properties": {
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "title": "Created By",
+      "type": "string"
+    },
+    "error_types": {
+      "items": {
+        "$ref": "#/$defs/ErrorType"
+      },
+      "title": "Error Types",
+      "type": "array"
+    },
+    "evaluation_id": {
+      "title": "Evaluation Id",
+      "type": "string"
+    },
+    "hypotheses": {
+      "items": {
+        "$ref": "#/$defs/Hypothesis"
+      },
+      "title": "Hypotheses",
+      "type": "array"
+    },
+    "impact_window_end": {
+      "format": "date-time",
+      "title": "Impact Window End",
+      "type": "string"
+    },
+    "impact_window_start": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Last accepted run before the failure; patient results since then need review",
+      "title": "Impact Window Start"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "investigation_id": {
+      "title": "Investigation Id",
+      "type": "string"
+    },
+    "narrative": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Narrative"
+    },
+    "narrative_provider": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Narrative Provider"
+    },
+    "other_analytes_rejected": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Other Analytes Rejected",
+      "type": "array"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "investigation_id",
+    "evaluation_id",
+    "analyte",
+    "instrument_id",
+    "run_id",
+    "error_types",
+    "hypotheses",
+    "other_analytes_rejected",
+    "impact_window_start",
+    "impact_window_end",
+    "created_at",
+    "created_by"
+  ],
+  "title": "Investigation",
+  "type": "object"
+}

@@ -1,0 +1,81 @@
+{
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/qc-hold.record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Patient-result release hold for an analyte on an instrument.\n\nPlaced automatically when a run is rejected; lifted only when a\nsupervisor closes a verified CAPA.",
+  "properties": {
+    "active": {
+      "default": true,
+      "title": "Active",
+      "type": "boolean"
+    },
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "capa_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Capa Id"
+    },
+    "evaluation_id": {
+      "title": "Evaluation Id",
+      "type": "string"
+    },
+    "hold_id": {
+      "title": "Hold Id",
+      "type": "string"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "placed_at": {
+      "format": "date-time",
+      "title": "Placed At",
+      "type": "string"
+    },
+    "released_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Released At"
+    },
+    "released_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Released By"
+    }
+  },
+  "required": [
+    "hold_id",
+    "analyte",
+    "instrument_id",
+    "evaluation_id",
+    "placed_at"
+  ],
+  "title": "QcHold",
+  "type": "object"
+}

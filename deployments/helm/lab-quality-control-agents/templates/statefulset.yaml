@@ -1,0 +1,137 @@
+{{- /*
+StatefulSet so each replica owns a persistent volume for its own signed
+audit chain (/var/lib/lab-qc/audit/<pod>.jsonl). A log shipper copies the
+files to immutable object storage provisioned by Terraform. Application
+state (results, evaluations, CAPA) lives in PostgreSQL.
+*/ -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "labqc.fullname" . }}
+  labels: {{- include "labqc.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "labqc.fullname" . }}-headless
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels: {{- include "labqc.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "labqc.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}{{ toYaml . | nindent 8 }}{{ end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range . }}
+        - {{- toYaml . | nindent 10 }}
+          labelSelector:
+            matchLabels: {{- include "labqc.selectorLabels" $ | nindent 14 }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: labqc
+          image: {{ include "labqc.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: {{ include "labqc.fullname" . }}
+            {{- if .Values.labqc.modelProviders.enabled }}
+            - secretRef:
+                name: {{ .Values.secrets.modelProviders }}
+            {{- end }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: LABQC_AUDIT_LOG_PATH
+              value: /var/lib/lab-qc/audit/$(POD_NAME).jsonl
+            - name: LABQC_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.database }}
+                  key: DATABASE_URL
+            - name: LABQC_FORWARDED_ALLOW_IPS
+              value: "*"
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 20
+            failureThreshold: 3
+          startupProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+            failureThreshold: 24
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: audit-key
+              mountPath: /etc/lab-qc/audit-key
+              readOnly: true
+            - name: audit
+              mountPath: /var/lib/lab-qc/audit
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.labqc.identityFabric.url }}
+            - name: identity-fabric-token
+              mountPath: /var/run/secrets/identity-fabric
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: audit-key
+          secret:
+            secretName: {{ .Values.secrets.auditKey }}
+            defaultMode: 0400
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+        {{- if .Values.labqc.identityFabric.url }}
+        - name: identity-fabric-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  audience: {{ .Values.labqc.identityFabric.tokenAudience }}
+                  expirationSeconds: 600
+                  path: token
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: audit
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with .Values.audit.storageClassName }}
+        storageClassName: {{ . }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.audit.size }}

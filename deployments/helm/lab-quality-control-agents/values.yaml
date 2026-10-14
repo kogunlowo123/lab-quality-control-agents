@@ -1,0 +1,111 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/kogunlowo123/lab-quality-control-agents
+  tag: ""  # defaults to .Chart.AppVersion
+  digest: ""  # set to pin an immutable sha256 digest; takes precedence over tag
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  name: lab-quality-control-agents
+  # Cloud workload identity bindings:
+  #   azure.workload.identity/client-id (Azure Workload ID, reference deployment)
+  #   eks.amazonaws.com/role-arn (AWS IRSA)
+  #   iam.gke.io/gcp-service-account (GKE Workload Identity)
+  annotations: {}
+
+# Azure Workload ID also needs the pod label azure.workload.identity/use: "true".
+podLabels: {}
+
+# Deployment-specific values marked REQUIRED have no default; the chart
+# refuses to render until they are set (helm install --values <env>.yaml).
+labqc:
+  environment: production
+  publicUrl: ""  # REQUIRED: external HTTPS URL (A2A agent card)
+  agentId: ""  # REQUIRED: SPIFFE ID of the QC agents in agent-identity-fabric
+  siteTimezone: UTC  # IANA zone for instrument timestamps without an offset
+  logLevel: INFO
+  investigationLookbackHours: 72
+  verificationMinRuns: 1
+  verificationMinRunsSystematic: 2
+  # REQUIRED: Host header values accepted by the MCP endpoint, e.g. qc.lab.corp:*
+  mcpAllowedHosts: []
+  oidc:
+    issuer: ""  # REQUIRED: enterprise OIDC issuer (Entra ID tenant)
+    audience: ""  # REQUIRED: audience of tokens for this service
+    jwksUrl: ""  # REQUIRED: issuer JWKS URL
+    rolesClaim: roles
+    nameClaim: name
+  identityFabric:
+    url: ""  # optional: agent-identity-fabric base URL; enables fabric credentials
+    tokenAudience: identity-fabric  # audience of the projected service-account token
+  # Investigation narratives via configs/providers.yaml. Provider endpoints,
+  # keys and prices come from secrets.modelProviders.
+  modelProviders:
+    enabled: false
+  otlpEndpoint: ""  # optional OTLP gRPC endpoint
+
+# Secrets are created by the platform secret operator (External Secrets,
+# Secrets Store CSI) from the cloud secret manager provisioned by Terraform.
+secrets:
+  # Secret holding key DATABASE_URL (postgresql+asyncpg://...).
+  database: lab-quality-control-agents-database
+  # Secret holding the Ed25519 audit signing key file.
+  auditKey: lab-quality-control-agents-audit-key
+  auditKeyFile: ""  # REQUIRED: file name of the audit key within secrets.auditKey
+  # Secret with the AZURE_OPENAI_* / AZURE_AI_FOUNDRY_* variables (when enabled).
+  modelProviders: lab-quality-control-agents-model-providers
+
+audit:
+  storageClassName: ""
+  size: 20Gi
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  host: ""  # required when ingress.enabled
+  tlsSecret: lab-quality-control-agents-tls
+  annotations: {}
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 384Mi
+  limits:
+    cpu: "1"
+    memory: 768Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  minAvailable: 1
+
+networkPolicy:
+  enabled: true
+  # Namespaces whose pods may call the service (LIS interface engine, agents).
+  allowedNamespaceLabels:
+    agent-platform/member: "true"
+  monitoringNamespaceLabels:
+    kubernetes.io/metadata.name: observability
+  ingressNamespaceLabels:
+    kubernetes.io/metadata.name: ingress-nginx
+
+serviceMonitor:
+  enabled: false
+  interval: 30s
+
+nodeSelector: {}
+tolerations: []
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway

@@ -1,0 +1,41 @@
+# Foundation model providers for investigation narratives
+# (enabled by LABQC_PROVIDERS_FILE=configs/providers.yaml).
+#
+# ${NAME} values are resolved from the environment at start-up and loading
+# fails if any is unset. Credentials are referenced by variable name only.
+# Narrative requests are classified CONFIDENTIAL (2): only providers approved
+# for that level are eligible. QC decisions never depend on these providers.
+#
+# Primary: Azure OpenAI in the laboratory's Azure tenant (data residency and
+# BAA). Fallback: Azure AI Foundry. Self-hosted Llama for disconnected sites.
+providers:
+  - kind: openai_compatible
+    base_url: ${AZURE_OPENAI_ENDPOINT}
+    path: /openai/deployments/${AZURE_OPENAI_DEPLOYMENT}/chat/completions
+    query: {api-version: "2024-10-21"}
+    auth: api-key
+    api_key_env: AZURE_OPENAI_API_KEY
+    send_model: false
+    max_tokens_field: max_completion_tokens
+    profile:
+      name: azure-openai
+      model: ${AZURE_OPENAI_DEPLOYMENT}
+      region: ${AZURE_OPENAI_REGION}
+      max_classification: 2
+      input_cost_per_mtok: ${AZURE_OPENAI_INPUT_USD_PER_MTOK}
+      output_cost_per_mtok: ${AZURE_OPENAI_OUTPUT_USD_PER_MTOK}
+      tasks: [summarize]
+
+  - kind: openai_compatible
+    base_url: ${AZURE_AI_FOUNDRY_ENDPOINT}
+    path: /models/chat/completions
+    query: {api-version: "2024-05-01-preview"}
+    auth: api-key
+    api_key_env: AZURE_AI_FOUNDRY_API_KEY
+    profile:
+      name: azure-foundry
+      model: ${AZURE_AI_FOUNDRY_MODEL}
+      max_classification: 2
+      input_cost_per_mtok: ${AZURE_AI_FOUNDRY_INPUT_USD_PER_MTOK}
+      output_cost_per_mtok: ${AZURE_AI_FOUNDRY_OUTPUT_USD_PER_MTOK}
+      tasks: [summarize]

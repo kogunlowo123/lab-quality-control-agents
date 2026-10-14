@@ -1,0 +1,19 @@
+{
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/signature.request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Statement accompanying an electronic signature (21 CFR 11.50).",
+  "properties": {
+    "statement": {
+      "maxLength": 2000,
+      "minLength": 10,
+      "title": "Statement",
+      "type": "string"
+    }
+  },
+  "required": [
+    "statement"
+  ],
+  "title": "SignatureInput",
+  "type": "object"
+}

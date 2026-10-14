@@ -1,0 +1,124 @@
+{
+  "$defs": {
+    "TargetSource": {
+      "enum": [
+        "manufacturer",
+        "laboratory"
+      ],
+      "title": "TargetSource",
+      "type": "string"
+    },
+    "WestgardRule": {
+      "description": "Control rules in Westgard notation (N_L: N observations beyond L).",
+      "enum": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "title": "WestgardRule",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/kogunlowo123/lab-quality-control-agents/schemas/qc-target.record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Assigned mean and SD for one control material lot on one analyte and instrument.",
+  "properties": {
+    "analyte": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Analyte",
+      "type": "string"
+    },
+    "control_lot": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Control Lot",
+      "type": "string"
+    },
+    "effective_from": {
+      "format": "date-time",
+      "title": "Effective From",
+      "type": "string"
+    },
+    "established_n": {
+      "anyOf": [
+        {
+          "minimum": 2,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Established N"
+    },
+    "instrument_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Instrument Id",
+      "type": "string"
+    },
+    "level": {
+      "maximum": 6,
+      "minimum": 1,
+      "title": "Level",
+      "type": "integer"
+    },
+    "material_id": {
+      "description": "Control material identifier, one per level",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:\\-]{0,63}$",
+      "title": "Material Id",
+      "type": "string"
+    },
+    "mean": {
+      "title": "Mean",
+      "type": "number"
+    },
+    "rules": {
+      "default": [
+        "1_2s",
+        "1_3s",
+        "2_2s",
+        "R_4s",
+        "4_1s",
+        "10_x"
+      ],
+      "items": {
+        "$ref": "#/$defs/WestgardRule"
+      },
+      "minItems": 1,
+      "title": "Rules",
+      "type": "array"
+    },
+    "sd": {
+      "exclusiveMinimum": 0,
+      "title": "Sd",
+      "type": "number"
+    },
+    "source": {
+      "$ref": "#/$defs/TargetSource",
+      "default": "laboratory"
+    },
+    "units": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Units",
+      "type": "string"
+    }
+  },
+  "required": [
+    "analyte",
+    "instrument_id",
+    "material_id",
+    "control_lot",
+    "level",
+    "mean",
+    "sd",
+    "units",
+    "effective_from"
+  ],
+  "title": "QcTarget",
+  "type": "object"
+}
